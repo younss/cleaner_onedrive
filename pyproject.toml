@@ -1,0 +1,33 @@
+[project]
+name = "cleaner-onedrive"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "YA", email = "github@dunesys.ca"}
+]
+readme = "README.md"
+requires-python = ">=3.13,<4.0"
+dependencies = [
+    "msal (>=1.31.1,<2.0.0)",
+    "polars (>=1.22.0,<2.0.0)",
+    "backoff (>=2.2.1,<3.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "requests (>=2.32.3,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+coverage = "^7.6.11"
+pytest-mock = "^3.14.0"
+
+
+[tool.poetry.scripts]
+test = "pytest"
+test-cov = "pytest --cov=cleaner_onedrive"
+
