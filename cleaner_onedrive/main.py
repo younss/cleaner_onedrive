@@ -36,8 +36,9 @@ def get_access_token():
 
 
 @backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
-def get_files_recursive(root_folder_id, access_token):
+def get_files_recursive(root_folder_id ):
     """Retrieve all files from OneDrive recursively."""
+    access_token = get_access_token()
     headers = {"Authorization": f"Bearer {access_token}"}
     queue = [root_folder_id]
     all_files = []
@@ -84,8 +85,9 @@ def detect_duplicates(files):
 
     return duplicates
 
-def delete_duplicates(duplicates, access_token):
+def delete_duplicates(duplicates):
     """Delete duplicate files, keeping only the first file in each group, and return the list of kept files."""
+    access_token = get_access_token()
     if not duplicates:
         print("No duplicate files found.")
         return []
@@ -136,8 +138,7 @@ def delete_duplicates(duplicates, access_token):
 
 
 if __name__ == "__main__":
-    access_token = get_access_token()
-    all_files = get_files_recursive("root", access_token)
+    all_files = get_files_recursive("root")
 
     duplicates = detect_duplicates(all_files)
 
@@ -147,6 +148,6 @@ if __name__ == "__main__":
             for file in files:
                 print(f"- {file['name']} ({file['webUrl']})")
 
-        delete_duplicates(duplicates, access_token)
+        delete_duplicates(duplicates)
     else:
         print("No duplicate files found.")

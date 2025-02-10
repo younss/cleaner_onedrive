@@ -1,0 +1,41 @@
+name: Run Tests with Poetry
+
+on:
+  push:
+    branches:
+      - dev  # Trigger on push to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger on pull request to the 'main' branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Checkout the repository code
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.13'  # Specify the Python version you are using (change as needed)
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -  # Install Poetry
+
+      - name: Install dependencies using Poetry
+        run: |
+          poetry install  # Install the dependencies defined in pyproject.toml
+
+      - name: Run tests with Poetry
+        run: |
+          poetry run pytest  # Run the tests using Poetry's virtual environment
+      
+      - name: Upload test results
+        if: failure()  # Upload results only if tests fail
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-results/  # Customize with the path to your test results (if any)

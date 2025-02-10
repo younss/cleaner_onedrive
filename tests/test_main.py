@@ -69,9 +69,10 @@ def mocked_delete_request(*args, **kwargs):
 
 
 @patch("cleaner_onedrive.main.requests.get", side_effect=mocked_get_request)
-def test_get_files_recursive(mock_get):
+@patch("cleaner_onedrive.main.get_access_token", return_value="fake_token")
+def test_get_files_recursive(mock_get, mock_token):
     """Test fetching files recursively from OneDrive"""
-    files = get_files_recursive("root", "fake_token")
+    files = get_files_recursive("root")
 
     assert len(files) == 3
     assert files[0]["name"] == "test.txt"
@@ -143,7 +144,8 @@ def test_detect_duplicates():
 
 @patch("cleaner_onedrive.main.requests.delete", side_effect=mocked_delete_request)
 @patch("builtins.input", side_effect=["yes", "no", "yes"])  # Delete selected duplicates
-def test_delete_duplicates(mock_delete, mock_input):
+@patch("cleaner_onedrive.main.get_access_token", return_value="fake_token")
+def test_delete_duplicates(mock_delete, mock_input, mock_token):
     """Test deletion process with user confirmation"""
     with patch("builtins.print") as mock_print:
         duplicates = {
@@ -158,7 +160,7 @@ def test_delete_duplicates(mock_delete, mock_input):
             ]
         }
 
-        result = delete_duplicates(duplicates, "fake_token")
+        result = delete_duplicates(duplicates)
         assert len(result) == 2  # Ensure two files were kept
         mock_print.assert_any_call("Deleted: photo2.jpg")
         mock_print.assert_any_call("Deleted: test7.txt")
@@ -166,7 +168,8 @@ def test_delete_duplicates(mock_delete, mock_input):
 
 @patch("cleaner_onedrive.main.requests.delete", side_effect=mocked_delete_request)
 @patch("builtins.input", side_effect=["all"])  # Automatic deletion of all duplicates
-def test_delete_duplicates_all(mock_input, mock_delete):
+@patch("cleaner_onedrive.main.get_access_token", return_value="fake_token")
+def test_delete_duplicates_all(mock_delete,mock_input, mock_token):
     """Test automatic deletion of all duplicates"""
     with patch("builtins.print") as mock_print:
         duplicates = {
@@ -176,7 +179,7 @@ def test_delete_duplicates_all(mock_input, mock_delete):
             ]
         }
 
-        result = delete_duplicates(duplicates, "fake_token")
+        result = delete_duplicates(duplicates)
         assert len(result) == 1
         # Verify that deletion was attempted for all duplicates
         assert mock_delete.call_count == 1
