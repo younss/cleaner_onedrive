@@ -50,7 +50,7 @@ export TENANT_ID="YOUR_TENANT_ID"
 export CLIENT_SECRET="YOUR_CLIENT_SECRET"
 ```
 
-Alternatively, you can create a .env file in the root directory of your project with the following content (alue):
+Alternatively, you can create a .env file in the root directory of your project with the following content (value):
 
 ```env
 CLIENT_ID=YOUR_CLIENT_ID
